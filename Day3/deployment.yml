@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portal-web-deployment
+  labels:
+    app: portal-web
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: portal-web
+
+  template:
+    metadata:
+      labels:
+        app: portal-web
+
+    spec:
+      containers:
+        - name: web-container
+          image: Athitthiyan.azurecr.io/local-web-app:v1
+
+          ports:
+            - containerPort: 8080
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: portal-web-service
+
+spec:
+  type: LoadBalancer
+
+  selector:
+    app: portal-web
+
+  ports:
+    - port: 80
+      targetPort: 8080
