@@ -1,0 +1,13 @@
+1. Type of object Going to store:
+    * Image
+    * Resume
+    * Profile feed
+    * Chat
+
+2. Recommended:
+    AWS S3 Bucket
+
+3. Why better:
+    For LinkedIn style social networking platform, AWS S3 is generally better choice because of it's scalability, 
+    global CDN ecosystem, event-driven architecture support, and optimized handling of massive unstructured media 
+    content such as images, videos, and feeed assest.
