@@ -1,0 +1,134 @@
+=== SECTION A — PROBLEM STATEMENT ===
+
+A1.
+This pipeline converts a PDF report into useful insights through five connected stages. First,
+the system reads the PDF file and extracts text from each page. Then, the extracted data is 
+organized into a structured table containing details like page number, word count, and 
+preview text. After that, the processed data is saved in CSV and JSON formats for future use.
+The combined text is then sent to the Groq Llm AI model, which generates a short 
+three-point summary. Finally, the pipeline creates a bar chart using Matplotlib to visually 
+display the word count of each page. Each stage depends on the previous stage’s output.
+
+=== SECTION B — ARCHITECTURE DIAGRAM ===
+
+B1.
+PDF (./data/report.pdf)
+-> [Ingest]    -> list[str]  (raw text per page)
+-> [Structure] -> DataFrame  (page_no, word_count, first_50_chars)
+-> [Store]     -> output/pages.csv + output/pages.json
+-> [Summarise] -> Groq LLM   -> 3 bullet-point summary (text)
+-> [Visualise] -> matplotlib -> bar chart (word_count per page)
+
+=== SECTION C — CODE BLOCKS ===
+
+C1. LOGGING SETUP
+
+python
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+
+C2. INGEST + EXTRACT
+
+python
+import fitz
+
+logger.info("Stage 1: Ingest - opening PDF")
+doc = fitz.open("./data/report.pdf")
+pages_text = []
+for i, page in enumerate(doc):
+    text = page.get_text()
+    pages_text.append(text)
+    logger.info("Extracted page %d (%d chars)", i + 1, len(text))
+doc.close()
+
+
+C3. STRUCTURE
+
+python
+import pandas as pd
+
+logger.info("Stage 2: Structure - building DataFrame")
+rows = []
+for i, text in enumerate(pages_text):
+    rows.append({
+        "page_no": i + 1,
+        "word_count": len(text.split()),
+        "first_50_chars": text[:50],
+    })
+df = pd.DataFrame(rows)
+
+
+C4. STORE
+
+python
+import os
+
+logger.info("Stage 3: Store - writing CSV and JSON")
+os.makedirs("output", exist_ok=True)
+df.to_csv("output/pages.csv", index=False)
+df.to_json("output/pages.json", orient="records")
+
+
+C5. SUMMARISE WITH GROQ
+
+python
+from groq import Groq
+
+logger.info("Stage 4: Summarise - calling Groq")
+combined = "".join(pages_text)[:2000]
+client = Groq(api_key=os.environ["GROQ_API_KEY"])
+response = client.chat.completions.create(
+    model="llama-3.1-8b-instant",
+    messages=[
+        {
+            "role": "user",
+            "content": f"Summarise this in exactly 3 bullet points.\n\n{combined}",
+        }
+    ],
+)
+print(response.choices[0].message.content)
+
+
+C6. VISUALISE
+
+python
+import matplotlib.pyplot as plt
+
+logger.info("Stage 5: Visualise - bar chart")
+plt.bar(df["page_no"], df["word_count"])
+plt.title("Word Count per Page")
+plt.xlabel("Page Number")
+plt.ylabel("Word Count")
+plt.savefig("output/word_count.png")
+
+
+=== SECTION D — EXPECTED GROQ RESPONSE SHAPE ===
+
+D1.
+The Groq call prints a short, plain-text summary formatted as exactly three bullet points.
+Each bullet is one concise sentence drawn from the first 2000 characters of the report.
+The bullets are likely to cover the report’s main topic, its key findings or figures, and its
+conclusion or recommendation. Output is text only - no code, JSON, or tables.
+
+=== SECTION E — LESSONS LEARNED ===
+
+E1.
+What worked: 
+    The linear stage design kept the data flow obvious - each stage had one job and a
+    clear hand-off, so debugging was easy. PyMuPDF and pandas made ingestion and structuring 
+    almost trivial, and logging at every stage gave instant visibility into progress.
+
+What was painful:
+    Handling the Groq response shape and trimming text to 2000 characters took trial and
+    error, and making the output folder overwrite cleanly rather than append needed care.
+ 
+One MLOps practice from Day 6 I would add in production: 
+    externalise configuration and secrets (model name, file paths,
+    GROQ_API_KEY) into environment variables or a config file, plus structured run logging 
+    and output versioning, so every pipeline run is reproducible and traceable.
