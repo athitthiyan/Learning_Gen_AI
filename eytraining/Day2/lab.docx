@@ -1,0 +1,8 @@
+| EY Application                     | Model Type                                          | Primary Metric | Why This Metric?                                                                |
+|------------------------------------|-----------------------------------------------------|----------------|----------------------------------------------------------------------------------|
+| Anomaly detection in invoices      | Unsupervised Learning / Anomaly Detection           | Precision      | High precision reduces false fraud alerts and unnecessary audit investigations. |
+| Spam classification in audit emails| Supervised Learning / Classification                | F1-Score       | Balances precision and recall for spam detection.                               |
+| Predicting deal close probability  | Supervised Learning / Regression or Classification  | ROC-AUC        | Measures how well the model distinguishes successful vs unsuccessful deals.     |
+| Summarising 100-page contracts     | Generative AI / NLP / LLM                           | ROUGE Score    | Evaluates summary quality against reference summaries.                          |
+| Translating audit reports          | Sequence-to-Sequence NLP / Transformer Model        | BLEU Score     | Measures translation accuracy compared with human translations.                 |
+| Flagging revenue forecasting errors| Time Series Forecasting / Anomaly Detection         | RMSE           | Measures forecasting error magnitude effectively.                               |
