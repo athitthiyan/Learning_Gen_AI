@@ -6,8 +6,5 @@
 | Transformation rigidity     | Flexible SQL/dbt transformations                              |
 | Compute location            | Cloud-native BigQuery compute                                 |
 | Data ingestion style        | Batch ELT pipeline                                            |
-| Handling schema differences | Normalize after loading                                       |
-| Sensitive data handling     | Anonymize/mask before analytics layer                         |
 | Cost driver                 | Cheap storage + on-demand analytics compute                   |
-| Main benefit                | Faster adaptation to changing reporting needs                 |
 | Main risk if skipped        | Constant pipeline rewrites and data inconsistencies           |
