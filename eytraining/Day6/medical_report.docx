@@ -1,0 +1,13 @@
+| Dimension                   | Recommended Approach — ELT                                    |
+| --------------------------- | ------------------------------------------------------------- |
+| Where transform happens     | Inside BigQuery after loading raw CSVs                        |
+| Raw data preserved?         | Yes — store raw batch files in cloud storage/BigQuery staging |
+| Latency profile             | Batch / daily processing                                      |
+| Transformation rigidity     | Flexible SQL/dbt transformations                              |
+| Compute location            | Cloud-native BigQuery compute                                 |
+| Data ingestion style        | Batch ELT pipeline                                            |
+| Handling schema differences | Normalize after loading                                       |
+| Sensitive data handling     | Anonymize/mask before analytics layer                         |
+| Cost driver                 | Cheap storage + on-demand analytics compute                   |
+| Main benefit                | Faster adaptation to changing reporting needs                 |
+| Main risk if skipped        | Constant pipeline rewrites and data inconsistencies           |
