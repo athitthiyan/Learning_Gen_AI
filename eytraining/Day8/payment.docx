@@ -1,0 +1,25 @@
+A) Settlement Command - Queue - single consumer Ledger
+B) Payment received broadcast - Event Bus - multiple independent consumer
+C) SMS/Push Notification - Queue - each has unique message by each worker
+D) Fraud Score Req - Queue - each user has separate Req
+E) Acc state change events - Event Bus - multiple microservice should react
+F) End-of day reconciliation - Queue - worker will process each file one by one.
+
+Architecture:
+
+merchant api -> load balancer -> payment core
+                                    ↓
+                                    Ledger Service -> Ledger DB
+                                    ↓
+                                    Fraud Engine -> Fraud DB
+                                    ↓
+                                    Notification Hub
+                                    ↓
+                                    Analytics Pipeline
+                                    ↓
+                                    Reconcillation worker -> Reconcillation DB
+                                    ↓
+                                    Compilance service
+                                    ↓
+                                    Merchant Portal
+                                    
