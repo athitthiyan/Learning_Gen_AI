@@ -8,14 +8,19 @@ F) End-of day reconciliation - Queue - worker will process each file one by one.
 Architecture:
 
 merchant api -> load balancer -> payment core
+                                    ↓                                       ↓                       ↓
+                                    Ledger Service -> (Ledger DB)       Fraud Engine            Account State     
+                                    ↓                                       ↓                       ↓
+                                                                        (Fraud DB)              -> Payment core, -> Merchant Portal, -> Compilance Service
+                                    
+                                                                        ---X----X-----X----X--------X------X--------X--------X------X-----_X-------X-------X
+                                    
+                                    
+                                    Payment Received
+                                    ↓                                       ↓                       ↓
+                                    Notification Hub                    Analytics Pipeline          Fraud Engine
                                     ↓
-                                    Ledger Service -> Ledger DB
-                                    ↓
-                                    Fraud Engine -> Fraud DB
-                                    ↓
-                                    Notification Hub
-                                    ↓
-                                    Analytics Pipeline
+                                    SMS Worker
                                     ↓
                                     Reconcillation worker -> Reconcillation DB
                                     ↓
