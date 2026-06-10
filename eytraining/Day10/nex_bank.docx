@@ -1,0 +1,151 @@
+NexaBank — GenAI Business Challenge
+Rule-engine classification · Model recommendations · ROI estimates · No API needed  
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD A — MULTILINGUAL EMAIL TRIAGE (Customer Service)
+
+Problem Statement:
+8,000 customer emails arrive daily in 12 languages. Agents spend 7 minutes each on manual categorisation.
+
+Classification & Recommendation:
+
+* GenAI Type: Text Classification
+* Recommended Model: Claude 3.5 Sonnet
+* NexaBank Domain: Customer Service
+
+Estimated ROI Impact:
+
+* Time Saved: 68%
+* Cost Reduction: £320k / year
+* Quality Lift: +22%
+
+Extension Tasks:
+
+* Auto-reply drafting
+* Sentiment escalation
+* Multi-language QA
+* Agent assist overlay
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD B — REGULATORY UPDATE REVIEW (Compliance)
+
+Problem Statement:
+Compliance team reviews 300-page regulatory updates monthly. 40% of analyst time is spent on manual extraction.
+
+Classification & Recommendation:
+
+* GenAI Type: Document Summarisation
+* Recommended Model: Claude 3.5 Sonnet
+* NexaBank Domain: Compliance
+
+Estimated ROI Impact:
+
+* Time Saved: 40%
+* Cost Reduction: £180k / year
+* Quality Lift: +35%
+
+Extension Tasks:
+
+* Change-delta alerts
+* Obligation tracker
+* Policy gap analysis
+* Audit trail logging
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD C — FRAUD ALERT NARRATIVES (Fraud Detection)
+
+Problem Statement:
+Fraud team needs plain-English transaction decline explanations to send customers within 2 minutes.
+
+Classification & Recommendation:
+
+* GenAI Type: Text Generation
+* Recommended Model: GPT-4o mini
+* NexaBank Domain: Fraud Detection
+
+Estimated ROI Impact:
+
+* Time Saved: 75%
+* Cost Reduction: £95k / year
+* Quality Lift: +41%
+
+Extension Tasks:
+
+* Tone A/B testing
+* Multi-channel delivery
+* Dispute pre-emption
+* Regulatory disclaimer injection
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD D — SYNTHETIC FRAUD TRAINING DATA (Fraud Detection)
+
+Problem Statement:
+Short of 50K labelled fraud samples for ML model training. Cannot use real customer PII data (GDPR).
+
+Classification & Recommendation:
+
+* GenAI Type: Synthetic Data Generation
+* Recommended Model: GPT-4o
+* NexaBank Domain: Fraud Detection
+
+Estimated ROI Impact:
+
+* Time Saved: 55%
+* Cost Reduction: £240k / year
+* Quality Lift: +60%
+
+Extension Tasks:
+
+* Bias audit pipeline
+* GDPR compliance check
+* Model retraining loop
+* Drift detection alerts
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD E — PERSONALISED MARKETING COPY (Growth)
+
+Problem Statement:
+Product team needs 200 A/B variant copies for savings product campaigns across 5 customer segments.
+
+Classification & Recommendation:
+
+* GenAI Type: Text Generation
+* Recommended Model: Claude 3.5 Sonnet
+* NexaBank Domain: Growth
+
+Estimated ROI Impact:
+
+* Time Saved: 62%
+* Cost Reduction: £140k / year
+* Quality Lift: +28%
+
+Extension Tasks:
+
+* Segment persona builder
+* Brand tone guardrails
+* CTR feedback loop
+* Localisation variants
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+CARD F — DEVELOPER BOILERPLATE GENERATOR (Engineering)
+
+Problem Statement:
+Developers write approximately 600 lines of boilerplate per new API integration. 40% could be auto-generated.
+
+Classification & Recommendation:
+
+* GenAI Type: Code Generation
+* Recommended Model: Claude 3.5 Sonnet
+* NexaBank Domain: Engineering
+
+Estimated ROI Impact:
+
+* Time Saved: 40%
+* Cost Reduction: £210k / year
+* Quality Lift: +18%
