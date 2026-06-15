@@ -1,0 +1,10 @@
+Problem 1:
+    Among the evaluated LLMs, GPT-4o would be the best production choice for FinSight AI because it provides the most balanced performance across all critical conditions. It offers strong BLEU and ROUGE scores for accurate and high-quality financial summarization, maintains good faithfulness with lower hallucination risk, and delivers significantly better latency stability compared to Claude. While Claude may achieve slightly higher reasoning quality, the latency graph shows major inference spikes that violate the <3s SLA requirement. Therefore, GPT-4o is the most suitable model because it best satisfies accuracy, latency, faithfulness, scalability, and enterprise production constraints simultaneously.
+
+Problem 2:
+    | Metric       | GPT-4o Performance |
+    | ------------ | ------------------ |
+    | BLEU         | High               |
+    | ROUGE        | High               |
+    | Faithfulness | High               |
+    | Latency      | Good / Stable      |
