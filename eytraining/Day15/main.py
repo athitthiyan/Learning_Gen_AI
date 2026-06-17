@@ -1,9 +1,14 @@
 import os
 import asyncio
+from dotenv import load_dotenv
 from fastapi import FastAPI
-from azure.servicebus import ServiceBusClient, ServiceBusMessage
+from azure.servicebus.aio import ServiceBusClient
+from azure.servicebus import ServiceBusMessage
 from azure.cosmos import CosmosClient
 from groq import Groq
+
+# Load environment variables from .env (if present)
+load_dotenv()
 
 app = FastAPI(title="Pipeline API with Groq")
 
