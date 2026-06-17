@@ -1,0 +1,23 @@
+Framework Chosen:
+
+**LangChain + LlamaIndex**
+
+Step 1:
+
+Use **LangChain** to ingest incoming customer emails and classify them into categories using an LLM classification chain.
+
+Step 2:
+
+Use **LlamaIndex** to index company policy documents, FAQs, and support manuals for semantic retrieval.
+
+Step 3:
+
+Retrieve the most relevant policy/context documents using RAG and generate a draft response for the customer.
+
+Step 4:
+
+Use LangChain Agents/Tools to evaluate confidence scores; escalate low-confidence or complex cases to a human agent through the ticketing API.
+
+Justification:
+
+LlamaIndex is ideal for large-scale document retrieval and RAG over policy documents, while LangChain provides orchestration, workflow automation, API integration, and agent-based decision making for escalation handling.
