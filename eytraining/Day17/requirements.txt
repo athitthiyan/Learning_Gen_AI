@@ -1,29 +1,48 @@
-# YouTube Emotion Analyzer - dependencies (TensorFlow-free, Python 3.14 OK)
-# Install in stages so you only pull what you need.
+# ============================================================================
+# YouTube Emotion Analyzer - dependencies
+# ----------------------------------------------------------------------------
+# Tested on Windows 11 + Python 3.14. Also works on Python 3.10-3.13 and on
+# macOS / Linux.
+#
+# IMPORTANT - there is intentionally NO tensorflow, deepface, or tf-keras here.
+# TensorFlow has no wheel for Python 3.14, so installing those packages causes:
+#     ERROR: Cannot install ... ResolutionImpossible
+#     tensorflow ... no matching distribution
+# Facial emotion runs on PyTorch instead, so none of that is needed.
+#
+# Installing this file with:   pip install -r requirements.txt
+# resolves cleanly on Python 3.14 (every package below ships a 3.14 wheel).
+# ============================================================================
 
 # ---- Core (always required) ----
-yt-dlp>=2025.1.1          # download YouTube videos/shorts
+yt-dlp>=2025.1.1          # download YouTube videos / shorts
 numpy>=1.24
+av>=11                    # decodes audio with its OWN bundled ffmpeg, so a
+                          # system ffmpeg on PATH is NOT required
+                          # (also pulled in automatically by faster-whisper)
 
-# ---- language modality (lightest; start here) ----
-# Whisper transcription + 7-emotion text classifier
-faster-whisper>=1.0.0
-transformers>=4.40
-torch>=2.2                # CPU build is fine; see README for the CPU-only install
+# ---- language modality (lightest - start here) ----
+faster-whisper>=1.0.0     # speech-to-text (brings in ctranslate2, onnxruntime, av)
+transformers>=4.40        # runs the text / audio / image emotion models
+torch>=2.2                # CPU build is fine; CPU-only install is in the README
 
-# ---- prosody modality (voice tone / speech emotion) ----
+# ---- prosody modality (voice tone) ----
 librosa>=0.10
 soundfile>=0.12
-# (also uses transformers + torch from above)
 
-# ---- face modality (facial expressions) ----
-# Runs on PyTorch via transformers -- NO TensorFlow / DeepFace needed.
+# ---- face modality (facial expressions, PyTorch - NO TensorFlow) ----
 opencv-python>=4.9        # face detection (Haar cascade) + frame reading
 pillow>=10.0              # frame -> image conversion for the classifier
-# (face emotion model itself loads through transformers + torch)
 
-# ---- system dependency (NOT pip) ----
-# ffmpeg must be installed separately:
-#   Windows:       winget install Gyan.FFmpeg   (or download from ffmpeg.org)
-#   macOS:         brew install ffmpeg
-#   Ubuntu/Debian: sudo apt install ffmpeg
+# ============================================================================
+# OPTIONAL system tool (NOT a pip package)
+# ----------------------------------------------------------------------------
+# ffmpeg is OPTIONAL. The `av` package above already decodes audio, so you can
+# skip this entirely. Install it only if you want a manual fallback:
+#     Windows:        winget install Gyan.FFmpeg   (then RESTART the terminal)
+#     macOS:          brew install ffmpeg
+#     Ubuntu/Debian:  sudo apt install ffmpeg
+#
+# Linux note: if pip refuses with "externally-managed-environment", add
+#     --break-system-packages   to the pip command (Windows/macOS don't need it).
+# ============================================================================

@@ -24,6 +24,7 @@ Run `python youtube_emotion_analyzer.py --help` for options.
 
 import argparse
 import json
+import shutil
 import os
 import subprocess
 import sys
@@ -113,24 +114,82 @@ class YouTubeEmotionAnalyzer:
 
     # ------------------------------------------------------------------ #
     # 2. Audio extraction (needed by language / prosody / burst)
+    #    Primary path uses PyAV, which bundles its own ffmpeg, so a system
+    #    ffmpeg on PATH is NOT required. Falls back to a system ffmpeg binary.
     # ------------------------------------------------------------------ #
     def extract_audio(self, video_path):
-        """Extract 16 kHz mono WAV via ffmpeg. Returns wav path."""
+        """Extract a 16 kHz mono WAV next to the video. Returns the wav path."""
         wav_path = os.path.splitext(video_path)[0] + ".wav"
         if os.path.exists(wav_path):
             return wav_path
-        log("Extracting audio (16 kHz mono WAV) with ffmpeg...")
-        cmd = [
-            "ffmpeg", "-y", "-i", video_path,
-            "-ac", "1", "-ar", "16000", "-vn", wav_path,
-        ]
+
+        # --- Primary: PyAV (bundled ffmpeg; installed with faster-whisper) ---
+        try:
+            log("Extracting audio (16 kHz mono WAV) via PyAV...")
+            self._extract_audio_pyav(video_path, wav_path)
+            return wav_path
+        except Exception as e:
+            log(f"PyAV path unavailable ({e}); trying a system ffmpeg...", status="!")
+
+        # --- Fallback: system ffmpeg binary ---
+        ffmpeg = shutil.which("ffmpeg") or self._find_ffmpeg_binary()
+        if not ffmpeg:
+            raise RuntimeError(
+                "Could not extract audio. PyAV failed and no ffmpeg binary was "
+                "found on PATH.\nFix options:\n"
+                "  * Close and reopen your terminal (winget just added ffmpeg to "
+                "PATH; existing shells don't see it until restarted), or\n"
+                "  * pip install av   (provides a bundled decoder, no PATH needed)."
+            )
+        cmd = [ffmpeg, "-y", "-i", video_path, "-ac", "1", "-ar", "16000", "-vn", wav_path]
         result = subprocess.run(cmd, capture_output=True, text=True)
         if result.returncode != 0:
-            raise RuntimeError(
-                "ffmpeg failed to extract audio. Is ffmpeg installed?\n"
-                + result.stderr[-500:]
-            )
+            raise RuntimeError("ffmpeg failed to extract audio:\n" + result.stderr[-500:])
         return wav_path
+
+    @staticmethod
+    def _extract_audio_pyav(video_path, wav_path):
+        """Decode + resample to 16 kHz mono PCM using PyAV, write with soundfile."""
+        import av
+        import numpy as np
+        import soundfile as sf
+
+        container = av.open(video_path)
+        try:
+            audio_stream = next(s for s in container.streams if s.type == "audio")
+        except StopIteration:
+            container.close()
+            raise RuntimeError("no audio stream in file")
+
+        resampler = av.AudioResampler(format="s16", layout="mono", rate=16000)
+        chunks = []
+
+        def collect(frames):
+            for fr in frames:
+                arr = fr.to_ndarray()  # mono s16 -> shape (1, n)
+                chunks.append(np.asarray(arr).reshape(-1))
+
+        for frame in container.decode(audio_stream):
+            collect(resampler.resample(frame))
+        collect(resampler.resample(None))  # flush buffered samples
+        container.close()
+
+        if not chunks:
+            raise RuntimeError("no audio frames decoded")
+        audio = np.concatenate(chunks).astype("int16")
+        sf.write(wav_path, audio, 16000, subtype="PCM_16")
+
+    @staticmethod
+    def _find_ffmpeg_binary():
+        """Look in common Windows winget install locations as a last resort."""
+        local = os.environ.get("LOCALAPPDATA", "")
+        candidates = [
+            os.path.join(local, "Microsoft", "WinGet", "Links", "ffmpeg.exe"),
+        ]
+        for c in candidates:
+            if c and os.path.exists(c):
+                return c
+        return None
 
     # ------------------------------------------------------------------ #
     # 3a. Language emotions  (Whisper transcription -> text classifier)
