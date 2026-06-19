@@ -1,0 +1,7 @@
+| Scenario                         | Best Framework      | Reason                                                                     |
+| -------------------------------- | ------------------- | -------------------------------------------------------------------------- |
+| 1. Understaffed marketing team   |   n8n               | Low-code, non-technical users                                              |
+| 2. Research brief assembly line  |   CrewAI            | Structured role-based multi-agent workflow                                 |
+| 3. Self-debugging data analyst   |   AutoGen           | Open-ended multi-agent conversation with code execution                    |
+| 4. Regulated enterprise platform |   LangGraph         | Production-grade orchestration, checkpoints, human approval, observability |
+| Bonus: Investor demo             |   n8n → LangGraph   | Build fast first, migrate to a production-grade architecture later         |
