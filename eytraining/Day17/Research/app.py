@@ -95,25 +95,36 @@ def build_graph():
         return {"draft": res.content}
 
     def supervisor(state: AgentState):
-        structured_llm = llm.with_structured_output(Router)
         n_notes = len(state.get("research_notes", []))
         has_draft = bool(state.get("draft"))
-        prompt = f"""
-        You are a supervisor coordinating a researcher and a writer.
-        Rules:
-        - No research notes yet -> next_worker = "researcher".
-        - Notes exist but no draft yet -> next_worker = "writer".
-        - A draft already exists -> next_worker = "FINISH".
 
-        Task: {state['task']}
-        Research notes collected: {n_notes}
-        Draft already written: {"yes" if has_draft else "no"}
-        """
-        decision = structured_llm.invoke(prompt)
-        next_worker = decision.next_worker
-        if has_draft:                       # guard: writer can never loop forever
-            next_worker = "FINISH"
-        return {"next_node": next_worker, "revision_feedback": decision.instructions}
+        # Once a draft exists the answer is always FINISH, so there's no need to
+        # call the LLM here -- and this was the call that intermittently 400'd
+        # ("tool_use_failed") on resume. Skipping it removes the crash entirely.
+        if has_draft:
+            return {"next_node": "FINISH", "revision_feedback": "Draft complete."}
+
+        # Deterministic routing is always correct; the LLM only adds the
+        # human-readable instructions. Groq's structured output can occasionally
+        # raise a 400 (tool_use_failed), so we guard it and fall back.
+        fallback = "researcher" if n_notes == 0 else "writer"
+        try:
+            prompt = f"""
+            You are a supervisor coordinating a researcher and a writer.
+            Rules:
+            - No research notes yet -> next_worker = "researcher".
+            - Notes exist but no draft yet -> next_worker = "writer".
+
+            Task: {state['task']}
+            Research notes collected: {n_notes}
+            """
+            decision = llm.with_structured_output(Router).invoke(prompt)
+            next_worker = decision.next_worker
+            if next_worker not in ("researcher", "writer"):   # never FINISH before a draft
+                next_worker = fallback
+            return {"next_node": next_worker, "revision_feedback": decision.instructions}
+        except Exception:
+            return {"next_node": fallback, "revision_feedback": f"(routing fallback → {fallback})"}
 
     builder = StateGraph(AgentState)
     builder.add_node("supervisor", supervisor)
@@ -157,11 +168,15 @@ if st.session_state.phase == "idle":
     task = st.text_input("Research task", value="Impact of LPU architecture on AI inference speeds")
     if st.button("🚀 Start research", type="primary"):
         with st.spinner("Supervisor routing → researcher searching…"):
-            g, cfg = st.session_state.graph, _config()
-            init = {"task": task, "research_notes": [], "retry_count": 0, "draft": ""}
-            for _ in g.stream(init, cfg, stream_mode="values"):
-                pass
-        st.session_state.phase = "paused"
+            try:
+                g, cfg = st.session_state.graph, _config()
+                init = {"task": task, "research_notes": [], "retry_count": 0, "draft": ""}
+                for _ in g.stream(init, cfg, stream_mode="values"):
+                    pass
+                st.session_state.phase = "paused"
+            except Exception as e:
+                st.error(f"Research step failed: {type(e).__name__}: {e}")
+                st.stop()
         st.rerun()
 
 elif st.session_state.phase == "paused":
@@ -175,10 +190,14 @@ elif st.session_state.phase == "paused":
     col1, col2 = st.columns(2)
     if col1.button("✍️ Approve & write report", type="primary"):
         with st.spinner("Writer composing…"):
-            g, cfg = st.session_state.graph, _config()
-            for _ in g.stream(None, cfg, stream_mode="values"):
-                pass
-        st.session_state.phase = "done"
+            try:
+                g, cfg = st.session_state.graph, _config()
+                for _ in g.stream(None, cfg, stream_mode="values"):
+                    pass
+                st.session_state.phase = "done"
+            except Exception as e:
+                st.error(f"Writing step failed: {type(e).__name__}: {e}")
+                st.stop()
         st.rerun()
     if col2.button("🔄 Start over"):
         st.session_state.thread_id = str(uuid.uuid4())
