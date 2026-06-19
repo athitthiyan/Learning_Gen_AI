@@ -1,0 +1,29 @@
+# YouTube Emotion Analyzer - dependencies (TensorFlow-free, Python 3.14 OK)
+# Install in stages so you only pull what you need.
+
+# ---- Core (always required) ----
+yt-dlp>=2025.1.1          # download YouTube videos/shorts
+numpy>=1.24
+
+# ---- language modality (lightest; start here) ----
+# Whisper transcription + 7-emotion text classifier
+faster-whisper>=1.0.0
+transformers>=4.40
+torch>=2.2                # CPU build is fine; see README for the CPU-only install
+
+# ---- prosody modality (voice tone / speech emotion) ----
+librosa>=0.10
+soundfile>=0.12
+# (also uses transformers + torch from above)
+
+# ---- face modality (facial expressions) ----
+# Runs on PyTorch via transformers -- NO TensorFlow / DeepFace needed.
+opencv-python>=4.9        # face detection (Haar cascade) + frame reading
+pillow>=10.0              # frame -> image conversion for the classifier
+# (face emotion model itself loads through transformers + torch)
+
+# ---- system dependency (NOT pip) ----
+# ffmpeg must be installed separately:
+#   Windows:       winget install Gyan.FFmpeg   (or download from ffmpeg.org)
+#   macOS:         brew install ffmpeg
+#   Ubuntu/Debian: sudo apt install ffmpeg

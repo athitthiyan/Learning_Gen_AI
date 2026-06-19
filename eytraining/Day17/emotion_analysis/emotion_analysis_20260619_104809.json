@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-06-19T10:48:09.501407",
+  "video_title": "Language is so important - Jack Ma | #entrepreneur",
+  "models_used": [
+    "language",
+    "prosody",
+    "face"
+  ],
+  "face_emotions": {
+    "sad": 0.2841367360204458,
+    "angry": 0.23943816497921944,
+    "happy": 0.23804505821317434,
+    "neutral": 0.1029482351616025,
+    "fear": 0.06968593318015337
+  },
+  "voice_emotions": {
+    "ang": 0.7203236222267151,
+    "hap": 0.17098642885684967,
+    "sad": 0.10544043034315109,
+    "neu": 0.0032495311461389065
+  },
+  "language_emotions": {
+    "neutral": 0.8412627577781677,
+    "joy": 0.12937325239181519,
+    "disgust": 0.010783608071506023,
+    "surprise": 0.007277687080204487,
+    "anger": 0.006294057704508305
+  },
+  "transcript": "Language is so important, when you learn the other language it's easy for you to communicate, easy to understand and be understood."
+}
