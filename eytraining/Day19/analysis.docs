@@ -1,0 +1,81 @@
+1. Claims Adjudication
+
+    GraphFlow
+
+                Start
+                  |
+        ---------------------
+        |        |         |
+        v        v         v
+ Fraud Check  Coverage  Medical Coding
+                 Check      Review
+        |        |         |
+        ---------|----------
+                  |
+                  v
+          Decision Agent
+                  |
+          Approve / Deny
+                  |
+                 End
+
+
+
+2. Buyer's Research Assistant
+
+    Magentic
+
+            User Request
+                  |
+                  v
+          Planner Agent
+                  |
+        -------------------
+        |        |        |
+        v        v        v
+ Web Search  Supplier   Market
+   Agent      Lookup    Analysis
+      \         |         /
+       \        |        /
+        --------|--------
+                 |
+                 v
+        Summary Generator
+                 |
+                 v
+            Final Report
+
+
+
+
+3. RFP Response Builder
+
+    GraphFlow
+
+             Start
+               |
+               v
+      Technical Section
+               |
+               v
+      Pricing Section
+               |
+               v
+     Compliance Section
+               |
+               v
+      Timeline Section
+               |
+               v
+        Assemble Draft
+               |
+               v
+       Reviewer Agent
+          /       \
+     Changes?      No
+       |            |
+      Yes           v
+       |      Final Sign-off
+       |
+       v
+ Back to Required Section
